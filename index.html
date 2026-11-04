@@ -2,59 +2,224 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NOVA AI</title>
 <style>
 *{box-sizing:border-box}
 body{
 margin:0;
-font-family:Arial,sans-serif;
 background:#080d1b;
 color:white;
-text-align:center;
+font-family:Arial,sans-serif;
 }
 header{
-padding:25px;
-font-size:30px;
-font-weight:bold;
-color:#8c9eff;
-}
-.hero{padding:65px 15px 35px}
-h1{font-size:42px}
-.hero p{color:#b5bfd8;font-size:17px}
-.container{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
-gap:15px;
 padding:20px;
-max-width:850px;
-margin:auto;
+background:#111a30;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid #263452;
+}
+.logo{font-size:25px;font-weight:bold;color:#8b9cff}
+select{
+background:#202d49;color:white;
+padding:10px;border:0;border-radius:8px;
+}
+main{
+max-width:750px;
+margin:50px auto;
+padding:20px;
+text-align:center;
+}
+h1{font-size:38px}
+.subtitle{color:#aab6d0}
+.chat{
+background:#111a30;
+border:1px solid #293858;
+border-radius:18px;
+padding:18px;
+margin-top:30px;
+}
+#messages{
+height:300px;
+overflow-y:auto;
+text-align:left;
+padding:10px;
+}
+.msg{
+background:#202d49;
+padding:13px;
+border-radius:12px;
+margin:12px 0;
+line-height:1.6;
+overflow-wrap:anywhere;
+}
+.user{background:#354b80}
+.input{
+display:flex;
+gap:8px;
+}
+input{
+flex:1;
+min-width:0;
+padding:15px;
+border-radius:10px;
+border:1px solid #354566;
+background:#080d1b;
+color:white;
+}
+button{
+background:#7186ff;
+color:white;
+border:0;
+padding:13px 18px;
+border-radius:10px;
+font-weight:bold;
+}
+button:disabled{opacity:.5}
+.tools{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+margin-top:25px;
 }
 .card{
-background:#151e35;
-padding:28px 10px;
-border-radius:16px;
+background:#151f37;
+padding:20px;
+border-radius:14px;
 border:1px solid #293858;
-font-size:18px;
 }
-.card span{font-size:35px;display:block;margin-bottom:12px}
-footer{padding:30px;color:#9ca8c5}
+footer{
+text-align:center;
+padding:30px;
+color:#8996b5;
+}
 </style>
 </head>
 <body>
-<header>🌙 NOVA AI</header>
-<section class="hero">
-<h1>One Platform,<br>Endless Possibilities.</h1>
-<p>Welcome to the Future of Artificial Intelligence.</p>
-</section>
-<div class="container">
-<div class="card"><span>🤖</span>AI Chat</div>
-<div class="card"><span>🎨</span>AI Images</div>
-<div class="card"><span>🎬</span>AI Videos</div>
-<div class="card"><span>📚</span>Stories</div>
-<div class="card"><span>📝</span>Articles</div>
-<div class="card"><span>🌍</span>AI Tools</div>
+
+<header>
+<div class="logo">🌙 NOVA AI</div>
+<select id="lang" onchange="changeLang()">
+<option value="en">English</option>
+<option value="ps">پښتو</option>
+<option value="ur">اردو</option>
+</select>
+</header>
+
+<main>
+<h1 id="title">Welcome to NOVA AI</h1>
+<p class="subtitle" id="subtitle">
+Your intelligent AI assistant
+</p>
+
+<div class="chat">
+<div id="messages">
+<div class="msg" id="welcome">
+Hello! I am NOVA AI. How can I help you?
 </div>
-<footer>© 2026 NOVA AI | All Rights Reserved</footer>
+</div>
+
+<div class="input">
+<input id="question" placeholder="Ask me anything..."
+onkeydown="if(event.key==='Enter')sendMessage()">
+<button id="send" onclick="sendMessage()">Send</button>
+</div>
+</div>
+
+<div class="tools">
+<div class="card">🤖<p>AI Chat</p></div>
+<div class="card">🎨<p>AI Images</p></div>
+<div class="card">🎬<p>AI Videos</p></div>
+<div class="card">📚<p>Stories</p></div>
+<div class="card">📝<p>Articles</p></div>
+<div class="card">🌍<p>AI Tools</p></div>
+</div>
+</main>
+
+<footer>
+© 2026 NOVA AI | All Rights Reserved
+</footer>
+
+<script>
+const API_URL = "PASTE_WORKER_URL_HERE";
+
+const translations = {
+en:{
+title:"Welcome to NOVA AI",
+subtitle:"Your intelligent AI assistant",
+welcome:"Hello! I am NOVA AI. How can I help you?",
+placeholder:"Ask me anything...",
+send:"Send"
+},
+ps:{
+title:"NOVA AI ته ښه راغلاست",
+subtitle:"ستاسو هوښیار AI مرستیال",
+welcome:"سلام! زه NOVA AI یم. څنګه مرسته درسره وکړم؟",
+placeholder:"خپله پوښتنه ولیکئ...",
+send:"ولېږه"
+},
+ur:{
+title:"NOVA AI میں خوش آمدید",
+subtitle:"آپ کا ذہین AI معاون",
+welcome:"سلام! میں NOVA AI ہوں۔ آپ کی کیا مدد کر سکتا ہوں؟",
+placeholder:"اپنا سوال لکھیں...",
+send:"بھیجیں"
+}
+};
+
+function changeLang(){
+let l=document.getElementById("lang").value;
+let t=translations[l];
+document.getElementById("title").textContent=t.title;
+document.getElementById("subtitle").textContent=t.subtitle;
+document.getElementById("welcome").textContent=t.welcome;
+document.getElementById("question").placeholder=t.placeholder;
+document.getElementById("send").textContent=t.send;
+document.documentElement.dir=l==="en"?"ltr":"rtl";
+}
+
+async function sendMessage(){
+let input=document.getElementById("question");
+let box=document.getElementById("messages");
+let btn=document.getElementById("send");
+let q=input.value.trim();
+if(!q)return;
+
+let user=document.createElement("div");
+user.className="msg user";
+user.textContent=q;
+box.appendChild(user);
+input.value="";
+btn.disabled=true;
+
+let reply=document.createElement("div");
+reply.className="msg";
+reply.textContent="Connecting to NOVA AI...";
+box.appendChild(reply);
+box.scrollTop=box.scrollHeight;
+
+try{
+if(API_URL==="PASTE_WORKER_URL_HERE"){
+throw new Error("AI service is not connected yet.");
+}
+let response=await fetch(API_URL,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+message:q,
+language:document.getElementById("lang").value
+})
+});
+if(!response.ok)throw new Error("Service unavailable");
+let data=await response.json();
+reply.textContent=data.reply || "No response received.";
+}catch(e){
+reply.textContent="AI is not connected yet. We are setting up the free AI service.";
+}
+btn.disabled=false;
+box.scrollTop=box.scrollHeight;
+}
+</script>
 </body>
 </html>
