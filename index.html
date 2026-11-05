@@ -528,7 +528,90 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
+const database = getDatabase(app);import {
+ ref,
+ get,
+ set,
+ runTransaction,
+ onValue
+} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+
+window.createRoom = async function(){
+
+ const name = document.getElementById("playerName").value.trim();
+
+ if(!name){
+  alert("Enter your name!");
+  return;
+ }
+
+ const code = Math.floor(100000 + Math.random()*900000).toString();
+
+ const roomRef = ref(database,"rooms/"+code);
+
+ const result = await runTransaction(roomRef,current=>{
+  if(current !== null) return;
+  return {
+   status:"waiting",
+   players:{
+    host:{name:name}
+   },
+   createdAt:Date.now()
+  };
+ });
+
+ if(!result.committed){
+  alert("Try again!");
+  return;
+ }
+
+ document.getElementById("roomStatus").innerText =
+ "Room Created! Code: "+code;
+
+};
+
+window.joinRoom = async function(){
+
+ const name = document.getElementById("playerName").value.trim();
+ const code = document.getElementById("roomCode").value.trim();
+
+ if(!name || !code){
+  alert("Enter name and room code!");
+  return;
+ }
+
+ const roomRef = ref(database,"rooms/"+code);
+
+ const result = await runTransaction(roomRef,current=>{
+
+  if(!current || current.status!=="waiting") return;
+
+  const players = current.players || {};
+  const count = Object.keys(players).length;
+
+  if(count>=4) return;
+
+  const id="player_"+Date.now();
+
+  players[id]={name:name};
+
+  current.players=players;
+
+  if(Object.keys(players).length===4){
+   current.status="ready";
+  }
+
+  return current;
+ });
+
+ if(result.committed){
+  document.getElementById("roomStatus").innerText =
+  "Successfully Joined Room: "+code;
+ }else{
+  alert("Room not found or full!");
+ }
+
+};
 
 console.log("NOVA Firebase Connected!");
 </script>
