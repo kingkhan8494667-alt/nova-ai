@@ -513,7 +513,38 @@ card.style.display=card.innerText.toLowerCase().includes(q)?"block":"none";
 
 </script>
 
-</body><script type="module">
+</body><script type="module"><section class="section" id="ludo">
+
+<h2>🎲 NOVA LUDO ONLINE</h2>
+
+<div class="card">
+    <h3>👤 Your Name</h3>
+    <input id="playerName"
+    placeholder="Enter your name">
+
+    <br><br>
+
+    <button onclick="createRoom()">
+    ➕ Create Room
+    </button>
+
+    <br><br>
+
+    <h3>Join Existing Room</h3>
+
+    <input id="roomCode"
+    placeholder="Enter Room Code">
+
+    <br><br>
+
+    <button onclick="joinRoom()">
+    🚀 Join Room
+    </button>
+
+    <h3 id="roomStatus"></h3>
+</div>
+
+     </section>
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
 
