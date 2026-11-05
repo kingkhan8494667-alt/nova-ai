@@ -513,5 +513,23 @@ card.style.display=card.innerText.toLowerCase().includes(q)?"block":"none";
 
 </script>
 
-</body>
+</body><script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getDatabase } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDS1xr2zRh0KJgSdivM-g9vXiF28WNxsuM",
+  authDomain: "nova-gaming-d192a.firebaseapp.com",
+  databaseURL: "ADD_DATABASE_URL_HERE",
+  projectId: "nova-gaming-d192a",
+  storageBucket: "nova-gaming-d192a.firebasestorage.app",
+  messagingSenderId: "205703632189",
+  appId: "1:205703632189:web:cbcbd1dd6ef9ea61bf2154"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+console.log("NOVA Firebase Connected!");
+</script>
 </html>
