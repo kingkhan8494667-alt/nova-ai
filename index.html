@@ -582,6 +582,105 @@ const database = getDatabase(app);
  onValue
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";</script>
 </body><style>
+.nova-explore {
+  background: #101827;
+  color: white;
+  padding: 25px 12px;
+  text-align: center;
+  border-radius: 14px;
+  margin: 20px 0;
+}
+.nova-explore h2 {
+  color: #00e5ff;
+}
+#gameSearch {
+  width: 90%;
+  padding: 14px;
+  border-radius: 10px;
+  border: 2px solid #00e5ff;
+  font-size: 16px;
+  margin: 15px 0;
+}
+.category-buttons button {
+  background: #263449;
+  color: white;
+  border: 1px solid #00e5ff;
+  padding: 10px 13px;
+  border-radius: 8px;
+  margin: 4px;
+  cursor: pointer;
+}
+.category-buttons button.active {
+  background: #00bcd4;
+  color: #07111f;
+}
+</style>
+
+<section class="nova-explore">
+  <h2>🎮 Explore Games</h2>
+  <p>Search your favorite mobile games</p>
+
+  <input
+    type="text"
+    id="gameSearch"
+    placeholder="🔍 Search games..."
+  >
+
+  <div class="category-buttons">
+    <button class="active" onclick="filterGames('all',this)">All Games</button>
+    <button onclick="filterGames('action',this)">Action</button>
+    <button onclick="filterGames('board',this)">Board</button>
+    <button onclick="filterGames('sports',this)">Sports</button>
+    <button onclick="filterGames('running',this)">Running</button>
+  </div>
+</section>
+
+<script>
+let selectedCategory = "all";
+
+function getGameCategory(card) {
+  let name = card.innerText.toLowerCase();
+
+  if (name.includes("pubg") || name.includes("free fire")) return "action";
+  if (name.includes("ludo")) return "board";
+  if (name.includes("8 ball") || name.includes("pool")) return "sports";
+  if (name.includes("subway")) return "running";
+
+  return "other";
+}
+
+function filterGames(category, button) {
+  selectedCategory = category;
+
+  document.querySelectorAll(".category-buttons button")
+    .forEach(btn => btn.classList.remove("active"));
+
+  button.classList.add("active");
+  updateGames();
+}
+
+function updateGames() {
+  let search = document.getElementById("gameSearch")
+    .value.toLowerCase();
+
+  let cards = document.querySelectorAll(
+    ".guide-card, .game-card, .app-card"
+  );
+
+  cards.forEach(card => {
+    let matchesSearch = card.innerText.toLowerCase().includes(search);
+    let matchesCategory =
+      selectedCategory === "all" ||
+      getGameCategory(card) === selectedCategory;
+
+    card.style.display =
+      matchesSearch && matchesCategory ? "" : "none";
+  });
+}
+
+document.getElementById("gameSearch")
+  .addEventListener("input", updateGames);
+</script><style>
 .game-guides {
   padding: 25px 15px;
   background: #101827;
