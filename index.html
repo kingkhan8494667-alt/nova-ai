@@ -582,6 +582,147 @@ const database = getDatabase(app);
  onValue
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";</script>
 </body><style>
+.review-box {
+  background: #111827;
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 12px;
+  color: white;
+}
+.review-box h4 { color: #00e5ff; }
+.stars {
+  font-size: 30px;
+  color: #64748b;
+  cursor: pointer;
+}
+.stars span.selected { color: gold; }
+.review-box textarea {
+  width: 100%;
+  min-height: 75px;
+  margin-top: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+.review-box button {
+  background: #00c8e5;
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-weight: bold;
+}
+.review-item {
+  background: #263449;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 8px;
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  document.querySelectorAll(".guide-card").forEach((card, index) => {
+
+    if (card.querySelector(".review-box")) return;
+
+    const id = "nova-review-" + index;
+    let rating = 0;
+
+    const box = document.createElement("div");
+    box.className = "review-box";
+
+    box.innerHTML = `
+      <h4>⭐ Rate This Game</h4>
+      <div class="stars">
+        <span data-value="1">★</span>
+        <span data-value="2">★</span>
+        <span data-value="3">★</span>
+        <span data-value="4">★</span>
+        <span data-value="5">★</span>
+      </div>
+      <textarea placeholder="Write your review..."></textarea>
+      <button type="button">Submit Review</button>
+      <div class="average"></div>
+      <div class="review-list"></div>
+    `;
+
+    card.appendChild(box);
+
+    const stars = box.querySelectorAll(".stars span");
+    const textarea = box.querySelector("textarea");
+    const button = box.querySelector("button");
+    const list = box.querySelector(".review-list");
+    const average = box.querySelector(".average");
+
+    function loadReviews() {
+      const reviews = JSON.parse(localStorage.getItem(id) || "[]");
+      list.innerHTML = "";
+
+      if (reviews.length) {
+        const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+        average.textContent = "Average: " + avg.toFixed(1) +
+          " ⭐ (" + reviews.length + " reviews)";
+      } else {
+        average.textContent = "No reviews yet";
+      }
+
+      reviews.forEach(r => {
+        const item = document.createElement("div");
+        item.className = "review-item";
+
+        const score = document.createElement("strong");
+        score.textContent = "⭐".repeat(r.rating);
+
+        const comment = document.createElement("p");
+        comment.textContent = r.comment;
+
+        item.append(score, comment);
+        list.appendChild(item);
+      });
+    }
+
+    stars.forEach(star => {
+      star.addEventListener("click", () => {
+        rating = Number(star.dataset.value);
+        stars.forEach(s => {
+          s.classList.toggle("selected",
+            Number(s.dataset.value) <= rating);
+        });
+      });
+    });
+
+    button.addEventListener("click", () => {
+      const comment = textarea.value.trim();
+
+      if (!rating) {
+        alert("Please select stars!");
+        return;
+      }
+
+      if (!comment) {
+        alert("Please write a review!");
+        return;
+      }
+
+      const reviews = JSON.parse(localStorage.getItem(id) || "[]");
+      reviews.push({ rating, comment });
+      localStorage.setItem(id, JSON.stringify(reviews));
+
+      rating = 0;
+      textarea.value = "";
+      stars.forEach(s => s.classList.remove("selected"));
+
+      loadReviews();
+      alert("Thank you for your review!");
+    });
+
+    loadReviews();
+  });
+
+});
+       </script><style>
 .nova-explore {
   background: #101827;
   color: white;
